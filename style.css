@@ -9,7 +9,8 @@ body {
 .container {
   max-width: 480px;
   margin: 0 auto;
-  padding: 20px
+  padding: 20px;
+}
 
 #main-menu, #game-screen {
   text-align: center;
