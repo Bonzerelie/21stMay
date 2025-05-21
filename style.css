@@ -218,3 +218,8 @@ body {
 #adjust-controls.hidden {
   display: none !important;
 }
+
+#about-btn {
+  display: block;
+  margin: 10px auto 0 auto; /* Top margin + auto left/right centers it */
+}

@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const addNoteBtn = document.getElementById('add-note');
   const removeNoteBtn = document.getElementById('remove-note');
   const selectedScaleLabel = document.getElementById('selected-scale-label');
+  const aboutBtn = document.getElementById('about-btn');
+const aboutPage = document.getElementById('about-page');
+const backToHomeFromAbout = document.getElementById('back-to-home-from-about');
 
   let audio = new Audio();
   let correct = 0;
@@ -38,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('major-scale-menu').classList.add('hidden');
     document.getElementById('mode-select-screen').classList.add('hidden');
     document.getElementById('game-screen').classList.add('hidden');
+    document.getElementById('about-page').classList.add('hidden'); // ✅ Add this line
   }
 
   const scaleData = {
@@ -418,6 +422,7 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
 
     toggleDisplay('notes');
     scaleLabel.textContent = scaleData[currentScale].label;
+    backButton.textContent = "← Back";
 
     const diagram = document.getElementById('scale-diagram');
     if (isChromatic) {
@@ -445,11 +450,12 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
 
   backButton.addEventListener('click', () => {
     gameScreen.classList.add('hidden');
+    backButton.textContent = currentScale === "Chromatic" ? "🏠 Home" : "← Back";
     if (currentScale === "Chromatic") {
       startScreen.classList.remove('hidden');
     } else {
       modeSelectScreen.classList.remove('hidden');
-      playNote(scaleData[currentScale].scaleAudio); // ✅ play scale audio again
+      playNote(scaleData[currentScale].scaleAudio);
     }
   });
   
@@ -499,6 +505,7 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
     document.getElementById('play-scale').classList.add('hidden');
     document.getElementById('display-toggle').classList.add('hidden');
   
+    backButton.textContent = "🏠 Home";
     scaleLabel.textContent = scaleData[currentScale].label;
     octaveLabel.textContent = scaleData[currentScale].octave;
     playRefBtn.textContent = `Play Reference (${scaleData[currentScale].noteOrder[0]})`;
@@ -511,6 +518,14 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
     hideAllScreens();
     document.getElementById('main-menu').classList.remove('hidden');
   });
+  aboutBtn.addEventListener('click', () => {
+    hideAllScreens();
+    aboutPage.classList.remove('hidden');
+  });
   
+  backToHomeFromAbout.addEventListener('click', () => {
+    hideAllScreens();
+    document.getElementById('main-menu').classList.remove('hidden');
+  });
   
 });
