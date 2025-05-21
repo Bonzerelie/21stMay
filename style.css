@@ -223,3 +223,49 @@ body {
   display: block;
   margin: 10px auto 0 auto; /* Top margin + auto left/right centers it */
 }
+
+#next-comparison.pop-animation {
+  animation: pop 0.3s ease-in-out;
+}
+
+#next-comparison {
+  background-color: #4492e5;
+  color: white;
+}
+
+#next-comparison:disabled {
+  background-color: #BDBDBD; /* Light grey when disabled */
+  color: white;
+  cursor: not-allowed;
+}
+
+#compare-buttons {
+  white-space: nowrap;
+  padding: 8px 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  max-width: 100%;
+}
+
+/* Shared height and spacing for all compare game buttons */
+.compare-answer,
+#play-comparison,
+#next-comparison {
+  white-space: nowrap;
+  padding: 8px 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  max-width: 100%;
+}
+
+.no-min-height {
+  min-height: initial;
+}
+
+#play-comparison {
+  margin-top: 20px;
+}

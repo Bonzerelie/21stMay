@@ -25,6 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const aboutBtn = document.getElementById('about-btn');
 const aboutPage = document.getElementById('about-page');
 const backToHomeFromAbout = document.getElementById('back-to-home-from-about');
+const compareScreen = document.getElementById('comparison-game');
+const compareBtn = document.getElementById('compare-mode-btn');
+const backFromCompare = document.getElementById('back-to-home-from-compare');
+const playComparisonBtn = document.getElementById('play-comparison');
+const compareAnswerButtons = document.querySelectorAll('.compare-answer');
+const compareCorrect = document.getElementById('compare-correct');
+const compareIncorrect = document.getElementById('compare-incorrect');
+const compareTotal = document.getElementById('compare-total');
+const compareAccuracy = document.getElementById('compare-accuracy');
+const nextCompareBtn = document.getElementById('next-comparison');
+const resetCompareScoreBtn = document.getElementById('reset-compare-score');
 
   let audio = new Audio();
   let correct = 0;
@@ -36,12 +47,16 @@ const backToHomeFromAbout = document.getElementById('back-to-home-from-about');
   let currentNote = '';
   let currentScale = '';
   let lastTwoNotes = [];
+  let compareNote1 = '';
+let compareNote2 = '';
+let compareScore = { correct: 0, incorrect: 0 };
   function hideAllScreens() {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('major-scale-menu').classList.add('hidden');
     document.getElementById('mode-select-screen').classList.add('hidden');
     document.getElementById('game-screen').classList.add('hidden');
-    document.getElementById('about-page').classList.add('hidden'); // ✅ Add this line
+    document.getElementById('about-page').classList.add('hidden');
+    document.getElementById('comparison-game').classList.add('hidden');
   }
 
   const scaleData = {
@@ -396,6 +411,64 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
     removeNoteBtn.disabled = currentMode <= 2;
   }
 
+  function getRandomNote(filenameRange) {
+    return filenameRange[Math.floor(Math.random() * filenameRange.length)];
+  }
+  
+  function playComparisonNotes() {
+    const allNotes = [
+      "c3", "c#3", "d3", "d#3", "e3", "f3", "f#3", "g3", "g#3", "a3", "a#3", "b3",
+      "c4", "c#4", "d4", "d#4", "e4", "f4", "f#4", "g4", "g#4", "a4", "a#4", "b4",
+      "c5"
+    ];
+  
+    let valid = false;
+    while (!valid) {
+      compareNote1 = getRandomNote(allNotes);
+      compareNote2 = getRandomNote(allNotes);
+      const distance = Math.abs(midi(compareNote1) - midi(compareNote2));
+      if (distance <= 2) {
+        valid = true;
+      }
+    }
+  
+    playStoredComparisonNotes();
+  }
+  
+  function playStoredComparisonNotes() {
+    const note1 = new Audio(`audio/${compareNote1.replace('#', '%23')}.mp3`);
+    const note2 = new Audio(`audio/${compareNote2.replace('#', '%23')}.mp3`);
+  
+    Promise.all([
+      new Promise(resolve => { note1.oncanplaythrough = resolve; note1.load(); }),
+      new Promise(resolve => { note2.oncanplaythrough = resolve; note2.load(); })
+    ]).then(() => {
+      setTimeout(() => {
+        note1.play();
+        setTimeout(() => {
+          note2.play();
+        }, 900); // delay between notes
+      }, 200); // delay before starting
+    });
+  }
+  
+  function updateCompareScoreDisplay() {
+    const total = compareScore.correct + compareScore.incorrect;
+    compareCorrect.textContent = compareScore.correct;
+    compareIncorrect.textContent = compareScore.incorrect;
+    compareTotal.textContent = total;
+    compareAccuracy.textContent = total ? ((compareScore.correct / total) * 100).toFixed(1) + '%' : '0.0%';
+  }
+
+  function midi(note) {
+    const map = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+    const match = note.match(/^([a-g]#?)(\d)$/i);
+    if (!match) return 0;
+    const name = match[1].toLowerCase();
+    const octave = parseInt(match[2], 10);
+    return 12 * (octave + 1) + map[name[0]] + (name.includes('#') ? 1 : 0);
+  }
+
   document.querySelectorAll('.scale-select').forEach(btn => {
     btn.addEventListener('click', () => {
       currentScale = btn.getAttribute('data-scale');
@@ -526,6 +599,65 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
   backToHomeFromAbout.addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('main-menu').classList.remove('hidden');
+  });
+
+  compareBtn.addEventListener('click', () => {
+    hideAllScreens();
+    compareScreen.classList.remove('hidden');
+    compareScore.correct = 0;
+    compareScore.incorrect = 0;
+    updateCompareScoreDisplay();
+    nextCompareBtn.disabled = true;
+    playComparisonNotes();
+  });
+  
+  backFromCompare.addEventListener('click', () => {
+    hideAllScreens();
+    document.getElementById('main-menu').classList.remove('hidden');
+  });
+  
+  playComparisonBtn.addEventListener('click', () => {
+    if (compareNote1 && compareNote2) {
+      playStoredComparisonNotes(); // replay same notes
+    } else {
+      playComparisonNotes(); // first time
+    }
+  });
+  
+  compareAnswerButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!compareNote1 || !compareNote2) return;
+      const guess = btn.getAttribute('data-answer');
+  
+      const n1 = midi(compareNote1);
+      const n2 = midi(compareNote2);
+      const correctAnswer = n2 > n1 ? 'higher' : n2 < n1 ? 'lower' : 'same';
+  
+      if (guess === correctAnswer) {
+        compareScore.correct++;
+      } else {
+        compareScore.incorrect++;
+      }
+  
+      updateCompareScoreDisplay();
+      nextCompareBtn.disabled = false;
+    nextCompareBtn.classList.add('pop-animation');
+    setTimeout(() => nextCompareBtn.classList.remove('pop-animation'), 300);
+  });
+});
+
+nextCompareBtn.addEventListener('click', () => {
+  compareNote1 = '';
+  compareNote2 = '';
+  playComparisonNotes();
+  nextCompareBtn.disabled = true;
+  nextCompareBtn.classList.remove('pop-animation');
+});
+  
+  resetCompareScoreBtn.addEventListener('click', () => {
+    compareScore.correct = 0;
+    compareScore.incorrect = 0;
+    updateCompareScoreDisplay();
   });
   
 });

@@ -11,16 +11,19 @@
     <div id="main-menu">
       <h1>The Relative Pitch Game 🎹🎶</h1>
       <h2>Select a Game!</h2>
+      <h3>Higher or Lower?</h3>
+      <button id="compare-mode-btn" class="green-button">Play: Higher or Lower</button>
+      <p>The game will play two notes. Is the second higher, lower or the same?</p>
       <h3>Notes Of The Major (Ionian) Scale</h3>
-      <p>Select any one of the 12 Major scales and use your inner ear, and the 'sound'
+      <button id="major-scales-btn" class="green-button">Start: Major Scales</button>
+      <p>Select any one of the 12 Major scales and use your mind's ear, and the 'sound'
         of the major scale, to identify the played notes! Don't be overwhelmed at the number
       of possible scales - if you can do this in C Major then other scales
       shouldn't be much more difficult.</p>
-      <button id="major-scales-btn" class="green-button">Major Scales</button>
       <h3>Chromatic Scale</h3>
+      <button id="chromatic-btn" class="green-button">Start: Chromatic Scale - One Octave</button>
       <p>Here we have all chromatic notes. This is much more difficult as we can't simply
         rely on the 'sound', or the tonic, of a Major scale to identify intervals and movements.</p>
-      <button id="chromatic-btn" class="green-button">Chromatic Scale - One Octave</button>
       <div></div>
       <button id="about-btn" class="green-button">About</button>
     </div>
@@ -77,6 +80,30 @@ is 'Ab' - both G# and Ab are the same pitch, we are just labelling them differen
     <p>
       This app focusses mostly on learning the sound, or ‘tonality’, of the Major scale. This is one of the most fundamentally useful musical skills in modern, particularly Western, music, where a significant majority of composition uses the Major scale as its foundational sonic palette - ooo what fancy words! This allows musicians with a solid internalisation of the major scale, and knowledge of basic music theory, the ability to effectively understand and navigate what a piece of music is doing, and move that onto their chosen instruments.
     </p>
+  </div>
+</div>
+<div id="comparison-game" class="hidden">
+  <div class="start-content">
+    <h1>The Relative Pitch Game 🎹🎶</h1>
+    <button id="back-to-home-from-compare" class="green-button back-button">🏠 Home</button>
+    <h2>Higher Or Lower?</h2>
+    <h3></h3>Is the second note higher than, lower than, or the same as the first?</h3>
+    <div></div>
+    <button id="play-comparison" class="green-button">Replay Notes</button>
+    <button id="next-comparison" class="blue-button next-button no-min-height" disabled>Next</button>
+    <div id="compare-buttons">
+      <button class="green-button compare-answer" data-answer="lower">Lower</button>
+      <button class="green-button compare-answer" data-answer="same">The Same</button>
+      <button class="green-button compare-answer" data-answer="higher">Higher</button>
+    </div>
+    <div class="scoreboard">
+      <h3>Score:</h3>
+      <p>Correct: <span id="compare-correct">0</span></p>
+      <p>Incorrect: <span id="compare-incorrect">0</span></p>
+      <p>Total: <span id="compare-total">0</span></p>
+      <p>Accuracy: <span id="compare-accuracy">0.0%</span></p>
+      <button id="reset-compare-score" class="green-button">Reset Score</button>
+    </div>
   </div>
 </div>
     <div id="mode-select-screen" class="hidden">
