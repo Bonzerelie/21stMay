@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentNotes = [];
   let currentNote = '';
   let currentScale = '';
+  let lastTwoNotes = [];
   function hideAllScreens() {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('major-scale-menu').classList.add('hidden');
@@ -187,7 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   };
 
-    function playNote(noteFile) {
+  function playNote(noteFile) {
+    if (!audio.paused) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
     audio.src = `audio/${encodeURIComponent(noteFile)}.mp3`;
     audio.play();
   }
@@ -222,7 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
     noteButtonsContainer.innerHTML = '';
     const data = scaleData[currentScale];
     const keys = data.noteOrder.slice(0, currentMode);
-    currentNotes = keys.flatMap(key => data.noteMap[key]);
+    currentNotes = keys.flatMap((key, index) => {
+      const files = data.noteMap[key];
+      // Special handling:
+      if (currentScale !== "Chromatic" && index === 0 && currentMode !== 8 && files.length > 1) {
+        return [files[0]]; // Use only first root note (e.g., d3)
+      }
+      return files;
+    });
   
     const enharmonics = {
       "C#": "C#/Db",
@@ -266,7 +278,16 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
     if (currentMode === 8 && scaleData[currentScale].noteMap[scaleData[currentScale].noteOrder[0]].length === 2) {
       candidates.push(scaleData[currentScale].noteMap[scaleData[currentScale].noteOrder[0]][1]);
     }
-    currentNote = candidates[Math.floor(Math.random() * candidates.length)];
+    do {
+      currentNote = candidates[Math.floor(Math.random() * candidates.length)];
+    } while (
+      lastTwoNotes.length >= 2 &&
+      lastTwoNotes[0] === currentNote &&
+      lastTwoNotes[1] === currentNote &&
+      candidates.length > 1
+    );
+    lastTwoNotes.push(currentNote);
+    if (lastTwoNotes.length > 2) lastTwoNotes.shift();
     playNote(currentNote);
     promptText.textContent = 'Which note was played?';
     nextBtn.disabled = true;
@@ -419,6 +440,7 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
   backToScaleSelect.addEventListener('click', () => {
     modeSelectScreen.classList.add('hidden');
     document.getElementById('major-scale-menu').classList.remove('hidden');
+    playNote('majorscalespage'); // ✅ Play audio again when going back
   });
 
   backButton.addEventListener('click', () => {
@@ -460,6 +482,7 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
   document.getElementById('major-scales-btn').addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('major-scale-menu').classList.remove('hidden');
+    playNote('majorscalespage'); // ✅ Play audio when page shows
   });
   
   
