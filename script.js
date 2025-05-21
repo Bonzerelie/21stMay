@@ -519,6 +519,7 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
     modeSelectScreen.classList.add('hidden');
     document.getElementById('major-scale-menu').classList.remove('hidden');
     playNote('majorscalespage'); // ✅ Play audio again when going back
+    window.scrollTo(0, 0);
   });
 
   backButton.addEventListener('click', () => {
@@ -561,7 +562,8 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
   document.getElementById('major-scales-btn').addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('major-scale-menu').classList.remove('hidden');
-    playNote('majorscalespage'); // ✅ Play audio when page shows
+    playNote('majorscalespage');
+    window.scrollTo(0, 0);
   });
   
   
@@ -584,21 +586,25 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
     playRefBtn.textContent = `Play Reference (${scaleData[currentScale].noteOrder[0]})`;
     document.getElementById('scale-diagram').classList.add('hidden');
     loadNewNote();
+    window.scrollTo(0, 0);
   });
   
   
   document.getElementById('back-to-home-from-major').addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('main-menu').classList.remove('hidden');
+    window.scrollTo(0, 0);
   });
   aboutBtn.addEventListener('click', () => {
     hideAllScreens();
     aboutPage.classList.remove('hidden');
+    window.scrollTo(0, 0);
   });
   
   backToHomeFromAbout.addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('main-menu').classList.remove('hidden');
+    window.scrollTo(0, 0);
   });
 
   compareBtn.addEventListener('click', () => {
@@ -609,11 +615,13 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
     updateCompareScoreDisplay();
     nextCompareBtn.disabled = true;
     playComparisonNotes();
+    window.scrollTo(0, 0);
   });
   
   backFromCompare.addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('main-menu').classList.remove('hidden');
+    window.scrollTo(0, 0);
   });
   
   playComparisonBtn.addEventListener('click', () => {
