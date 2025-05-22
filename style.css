@@ -269,3 +269,19 @@ body {
 #play-comparison {
   margin-top: 20px;
 }
+
+.button-spaced {
+  margin-top: 8px;
+}
+
+.blue-bold-button {
+  background-color: #0882d9; /* Blue */
+  color: rgb(255, 255, 255);
+  font-weight:;
+  text-decoration:;
+  padding: 6px 8px;
+  font-size: 16px;
+  border-radius: 8px;
+  border:  2px solid rgba(0, 0, 0, 0);
+  cursor: pointer;
+}

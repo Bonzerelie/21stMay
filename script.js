@@ -36,6 +36,8 @@ const compareTotal = document.getElementById('compare-total');
 const compareAccuracy = document.getElementById('compare-accuracy');
 const nextCompareBtn = document.getElementById('next-comparison');
 const resetCompareScoreBtn = document.getElementById('reset-compare-score');
+const compareFeedback = document.getElementById('compare-feedback');
+
 
   let audio = new Audio();
   let correct = 0;
@@ -203,6 +205,42 @@ let compareScore = { correct: 0, incorrect: 0 };
   scaleAudio: "", // Optional: Add "chromaticscale" if you have this audio
   label: "Chromatic Scale (One Octave C3–C4)",
   octave: "One Octave (Notes C3–C4)"
+},
+
+"ChromaticExtended": {
+  noteMap: {
+    "C": ["c3", "c4", "c5", "c6"],
+    "C#": ["c#3", "c#4", "c#5"],
+    "D": ["d3", "d4", "d5"],
+    "D#": ["d#3", "d#4", "d#5"],
+    "E": ["e3", "e4", "e5"],
+    "F": ["f3", "f4", "f5"],
+    "F#": ["f#3", "f#4", "f#5"],
+    "G": ["g3", "g4", "g5"],
+    "G#": ["g#3", "g#4", "g#5"],
+    "A": ["a3", "a4", "a5"],
+    "A#": ["a#3", "a#4", "a#5"],
+    "B": ["b3", "b4", "b5"]
+  },
+  degreeMap: {
+    "C": "1st",
+    "C#": "♯2nd",
+    "D": "2nd",
+    "D#": "♯3rd",
+    "E": "3rd",
+    "F": "4th",
+    "F#": "♯5th",
+    "G": "5th",
+    "G#": "♯6th",
+    "A": "6th",
+    "A#": "♯7th",
+    "B": "7th"
+  },
+  noteOrder: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+  referenceNote: "c3",
+  scaleAudio: "",
+  label: "Chromatic Scale (Three Octaves C3–C6)",
+  octave: "Three Octaves (Notes C3–C6)"
 }
 
   };
@@ -266,14 +304,14 @@ let compareScore = { correct: 0, incorrect: 0 };
     keys.forEach(note => {
       const btn = document.createElement('button');
       btn.className = 'blue-button';
-if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
+if ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && !showDegrees && enharmonics[note]) {
   btn.classList.add('wide-chromatic');
 }
       btn.setAttribute('data-note', note);
   
       btn.textContent = showDegrees
-        ? (currentMode === 8 && note === data.noteOrder[0] ? '1st/8th' : data.degreeMap[note])
-        : (currentScale === "Chromatic" && enharmonics[note] ? enharmonics[note] : note);
+  ? (currentMode === 8 && note === data.noteOrder[0] ? '1st/8th' : data.degreeMap[note])
+  : ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && enharmonics[note] ? enharmonics[note] : note);
   
       if (currentMode === 8 && showDegrees && note === data.noteOrder[0]) {
         btn.classList.add('wide-label');
@@ -525,7 +563,7 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
   backButton.addEventListener('click', () => {
     gameScreen.classList.add('hidden');
     backButton.textContent = currentScale === "Chromatic" ? "🏠 Home" : "← Back";
-    if (currentScale === "Chromatic") {
+    if (currentScale === "Chromatic" || currentScale === "ChromaticExtended") {
       startScreen.classList.remove('hidden');
     } else {
       modeSelectScreen.classList.remove('hidden');
@@ -588,7 +626,27 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
     loadNewNote();
     window.scrollTo(0, 0);
   });
+
+  document.getElementById('chromatic-extended-btn').addEventListener('click', () => {
+    currentScale = "ChromaticExtended";
+    currentMode = 12;
+    hideAllScreens();
+    document.getElementById('game-screen').classList.remove('hidden');
+    resetScore();
+    toggleDisplay('notes');
   
+    document.getElementById('adjust-controls').classList.add('hidden');
+    document.getElementById('play-scale').classList.add('hidden');
+    document.getElementById('display-toggle').classList.add('hidden');
+  
+    backButton.textContent = "🏠 Home";
+    scaleLabel.textContent = scaleData[currentScale].label;
+    octaveLabel.textContent = scaleData[currentScale].octave;
+    playRefBtn.textContent = `Play Reference (${scaleData[currentScale].noteOrder[0]})`;
+    document.getElementById('scale-diagram').classList.add('hidden');
+    loadNewNote();
+    window.scrollTo(0, 0);
+  });
   
   document.getElementById('back-to-home-from-major').addEventListener('click', () => {
     hideAllScreens();
@@ -635,24 +693,35 @@ if (currentScale === "Chromatic" && !showDegrees && enharmonics[note]) {
   compareAnswerButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       if (!compareNote1 || !compareNote2) return;
+      if (!nextCompareBtn.disabled) return; // Prevent double answers
+  
       const guess = btn.getAttribute('data-answer');
   
       const n1 = midi(compareNote1);
       const n2 = midi(compareNote2);
       const correctAnswer = n2 > n1 ? 'higher' : n2 < n1 ? 'lower' : 'same';
   
+      const readableNote1 = compareNote1.toUpperCase();
+      const readableNote2 = compareNote2.toUpperCase();
+  
       if (guess === correctAnswer) {
         compareScore.correct++;
+        btn.classList.add('correct');
+        compareFeedback.textContent = `Correct! ✅ The first note was ${readableNote1}, the second was ${readableNote2}.`;
       } else {
         compareScore.incorrect++;
+        btn.classList.add('incorrect');
+        document.querySelector(`.compare-answer[data-answer="${correctAnswer}"]`).classList.add('correct');
+        compareFeedback.textContent = `Incorrect! ❌ The first note was ${readableNote1}, the second was ${readableNote2}. The correct answer was "${correctAnswer.charAt(0).toUpperCase() + correctAnswer.slice(1)}".`;
       }
   
+      compareAnswerButtons.forEach(b => b.disabled = true);
       updateCompareScoreDisplay();
       nextCompareBtn.disabled = false;
-    nextCompareBtn.classList.add('pop-animation');
-    setTimeout(() => nextCompareBtn.classList.remove('pop-animation'), 300);
+      nextCompareBtn.classList.add('pop-animation');
+      setTimeout(() => nextCompareBtn.classList.remove('pop-animation'), 300);
+    });
   });
-});
 
 nextCompareBtn.addEventListener('click', () => {
   compareNote1 = '';
@@ -660,6 +729,11 @@ nextCompareBtn.addEventListener('click', () => {
   playComparisonNotes();
   nextCompareBtn.disabled = true;
   nextCompareBtn.classList.remove('pop-animation');
+  compareAnswerButtons.forEach(btn => {
+    btn.disabled = false;
+    btn.classList.remove('correct', 'incorrect');
+  });
+  compareFeedback.textContent = "Awaiting your answer...";
 });
   
   resetCompareScoreBtn.addEventListener('click', () => {
