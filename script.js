@@ -55,6 +55,7 @@ let compareScore = { correct: 0, incorrect: 0 };
   function hideAllScreens() {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('major-scale-menu').classList.add('hidden');
+    document.getElementById('chromatic-scale-menu').classList.add('hidden');
     document.getElementById('mode-select-screen').classList.add('hidden');
     document.getElementById('game-screen').classList.add('hidden');
     document.getElementById('about-page').classList.add('hidden');
@@ -660,6 +661,18 @@ if ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && !s
   });
   
   backToHomeFromAbout.addEventListener('click', () => {
+    hideAllScreens();
+    document.getElementById('main-menu').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  });
+
+  document.getElementById('chromatic-menu-btn').addEventListener('click', () => {
+    hideAllScreens();
+    document.getElementById('chromatic-scale-menu').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  });
+  
+  document.getElementById('back-to-home-from-chromatic').addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('main-menu').classList.remove('hidden');
     window.scrollTo(0, 0);
