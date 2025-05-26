@@ -172,7 +172,7 @@ body {
 }
 
 .game-title {
-  margin-top: 0;
+  margin-top: 4;
   margin-bottom: 10px;
 }
 
@@ -284,4 +284,50 @@ body {
   border-radius: 8px;
   border:  2px solid rgba(0, 0, 0, 0);
   cursor: pointer;
+}
+
+#major-scale-menu h3 {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+#major-scale-menu .scale-select {
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+#major-scale-menu .back-button {
+  margin-bottom: 8px;
+}
+
+#major-scale-menu h2 {
+  margin-top: 8px;
+}
+
+#comparison-game .back-button {
+  margin-bottom: 8px;
+}
+
+#comparison-game h2 {
+  margin-top: 8px;
+}
+
+#chromatic-scale-menu .back-button {
+  margin-bottom: 8px;
+}
+
+#chromatic-scale-menu h2 {
+  margin-top: 8px;
+}
+
+#chromatic-scale-menu p {
+  margin-top: 25px;
+}
+
+#major-scale-menu h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 10px;
+  margin-bottom: 4px;
 }

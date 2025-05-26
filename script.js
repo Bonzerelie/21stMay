@@ -52,15 +52,21 @@ const compareFeedback = document.getElementById('compare-feedback');
   let compareNote1 = '';
 let compareNote2 = '';
 let compareScore = { correct: 0, incorrect: 0 };
-  function hideAllScreens() {
-    document.getElementById('main-menu').classList.add('hidden');
-    document.getElementById('major-scale-menu').classList.add('hidden');
-    document.getElementById('chromatic-scale-menu').classList.add('hidden');
-    document.getElementById('mode-select-screen').classList.add('hidden');
-    document.getElementById('game-screen').classList.add('hidden');
-    document.getElementById('about-page').classList.add('hidden');
-    document.getElementById('comparison-game').classList.add('hidden');
+function hideAllScreens() {
+  // Stop any currently playing audio
+  if (!audio.paused) {
+    audio.pause();
+    audio.currentTime = 0;
   }
+
+  document.getElementById('main-menu').classList.add('hidden');
+  document.getElementById('major-scale-menu').classList.add('hidden');
+  document.getElementById('chromatic-scale-menu').classList.add('hidden');
+  document.getElementById('mode-select-screen').classList.add('hidden');
+  document.getElementById('game-screen').classList.add('hidden');
+  document.getElementById('about-page').classList.add('hidden');
+  document.getElementById('comparison-game').classList.add('hidden');
+}
 
   const scaleData = {
     "C": {
@@ -552,20 +558,24 @@ if ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && !s
     loadNewNote();
     });
   });
-  
 
   backToScaleSelect.addEventListener('click', () => {
     modeSelectScreen.classList.add('hidden');
     document.getElementById('major-scale-menu').classList.remove('hidden');
-    playNote('majorscalespage'); // ✅ Play audio again when going back
+    playNote('majorscalespage'); // Optional: play audio when returning to major scale select
     window.scrollTo(0, 0);
   });
+  
 
   backButton.addEventListener('click', () => {
     gameScreen.classList.add('hidden');
-    backButton.textContent = currentScale === "Chromatic" ? "🏠 Home" : "← Back";
+  
+    // Always set label based on context (optional, can remove this line if not needed anymore)
+    backButton.textContent = currentScale === "Chromatic" || currentScale === "ChromaticExtended" ? "← Back" : "← Back";
+  
     if (currentScale === "Chromatic" || currentScale === "ChromaticExtended") {
-      startScreen.classList.remove('hidden');
+      document.getElementById('chromatic-scale-menu').classList.remove('hidden');
+      playNote('chromaticpage'); // Optional: replay chromatic menu audio when going back
     } else {
       modeSelectScreen.classList.remove('hidden');
       playNote(scaleData[currentScale].scaleAudio);
@@ -619,7 +629,7 @@ if ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && !s
     document.getElementById('play-scale').classList.add('hidden');
     document.getElementById('display-toggle').classList.add('hidden');
   
-    backButton.textContent = "🏠 Home";
+    backButton.textContent = "← Back";
     scaleLabel.textContent = scaleData[currentScale].label;
     octaveLabel.textContent = scaleData[currentScale].octave;
     playRefBtn.textContent = `Play Reference (${scaleData[currentScale].noteOrder[0]})`;
@@ -640,7 +650,7 @@ if ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && !s
     document.getElementById('play-scale').classList.add('hidden');
     document.getElementById('display-toggle').classList.add('hidden');
   
-    backButton.textContent = "🏠 Home";
+    backButton.textContent = "← Back";
     scaleLabel.textContent = scaleData[currentScale].label;
     octaveLabel.textContent = scaleData[currentScale].octave;
     playRefBtn.textContent = `Play Reference (${scaleData[currentScale].noteOrder[0]})`;
@@ -669,6 +679,7 @@ if ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && !s
   document.getElementById('chromatic-menu-btn').addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('chromatic-scale-menu').classList.remove('hidden');
+    playNote('chromaticpage');
     window.scrollTo(0, 0);
   });
   
