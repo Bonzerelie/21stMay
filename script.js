@@ -692,9 +692,21 @@ if ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && !s
   compareBtn.addEventListener('click', () => {
     hideAllScreens();
     compareScreen.classList.remove('hidden');
+  
+    // Reset scores and feedback
     compareScore.correct = 0;
     compareScore.incorrect = 0;
     updateCompareScoreDisplay();
+  
+    // Reset note state and button UI
+    compareNote1 = '';
+    compareNote2 = '';
+    compareFeedback.textContent = "Awaiting your answer...";
+    compareAnswerButtons.forEach(btn => {
+      btn.disabled = false;
+      btn.classList.remove('correct', 'incorrect');
+    });
+  
     nextCompareBtn.disabled = true;
     playComparisonNotes();
     window.scrollTo(0, 0);
@@ -703,8 +715,19 @@ if ((currentScale === "Chromatic" || currentScale === "ChromaticExtended") && !s
   backFromCompare.addEventListener('click', () => {
     hideAllScreens();
     document.getElementById('main-menu').classList.remove('hidden');
+  
+    // Optional: clear state to ensure fresh entry later
+    compareNote1 = '';
+    compareNote2 = '';
+    nextCompareBtn.disabled = true;
+    compareAnswerButtons.forEach(btn => {
+      btn.disabled = false;
+      btn.classList.remove('correct', 'incorrect');
+    });
+    compareFeedback.textContent = "Awaiting your answer...";
+  
     window.scrollTo(0, 0);
-  });
+  })
   
   playComparisonBtn.addEventListener('click', () => {
     if (compareNote1 && compareNote2) {
